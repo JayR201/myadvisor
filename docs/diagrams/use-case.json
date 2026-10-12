@@ -1,0 +1,71 @@
+{
+  "system": "MyAdvisor",
+  "actors": [
+    {
+      "name": "Student",
+      "side": "left"
+    },
+    {
+      "name": "Advisor",
+      "side": "right"
+    }
+  ],
+  "use_cases": [
+    {
+      "name": "Book an Advising Session",
+      "actors": [
+        "Student"
+      ]
+    },
+    {
+      "name": "Manage Appointment Requests",
+      "actors": [
+        "Advisor"
+      ],
+      "extends": [
+        "Book an Advising Session"
+      ],
+      "includes": [
+        "Accept or Decline Appointment Request"
+      ]
+    },
+    {
+      "name": "Accept or Decline Appointment Request",
+      "actors": [
+        "Advisor"
+      ]
+    },
+    {
+      "name": "View Advising History",
+      "actors": [
+        "Student"
+      ],
+      "includes": [
+        "View Request Outcome"
+      ]
+    },
+    {
+      "name": "View Request Outcome",
+      "actors": [
+        "Student"
+      ]
+    },
+    {
+      "name": "View Appointment Details",
+      "actors": [
+        "Student",
+        "Advisor"
+      ]
+    },
+    {
+      "name": "View Student and Advisor Info",
+      "actors": [
+        "Student",
+        "Advisor"
+      ],
+      "extends": [
+        "View Appointment Details"
+      ]
+    }
+  ]
+}

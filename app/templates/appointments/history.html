@@ -1,0 +1,96 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Advising History | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page history-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">STUDENT SERVICES</p>
+    <h1>Advising History</h1>
+    <p>Review the requests your advisor has approved or denied.</p>
+  </header>
+
+  {% if appointments %}
+  <section class="history-list" aria-label="Your advising sessions">
+    {% for appointment, advisor in appointments %}
+    <article class="history-card history-card-status-{{ appointment.status|lower }}">
+      <div class="history-card-main">
+        <div class="history-date">
+          <span class="material-symbols-outlined" aria-hidden="true">event</span>
+          <div>
+            <h2>{{ appointment.date_time.strftime("%b %d, %Y") }}</h2>
+            <p>{{ appointment.date_time.strftime("%I:%M %p") }}</p>
+          </div>
+        </div>
+        <span class="history-status history-status-{{ appointment.status|lower }}">
+          {{ appointment.status|title }}
+        </span>
+      </div>
+
+      <p class="history-reason">{{ appointment.reason }}</p>
+      <p class="history-created-at">
+        Requested{% if appointment.created_at %} {{ appointment.created_at.strftime("%a, %b %d, %Y · %I:%M %p") }}{% else %} date unavailable{% endif %}
+      </p>
+
+      {% if appointment.status == "denied" and appointment.advising_notes %}
+      <section class="advising-note" aria-label="Advisor's denial note">
+        <strong>Advisor's note</strong>
+        {% for note in appointment.advising_notes %}
+        <p>{{ note.content }}</p>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      <div class="history-details">
+        <details>
+          <summary>Student Info</summary>
+          <dl>
+            <dt>Name</dt>
+            <dd>{{ student.name }}</dd>
+            <dt>Email</dt>
+            <dd>{{ student.email }}</dd>
+            <dt>Major</dt>
+            <dd>{{ student.major }}</dd>
+            <dt>Year</dt>
+            <dd>{{ student.year }}</dd>
+          </dl>
+        </details>
+        <details>
+          <summary>Advisor Info</summary>
+          <dl>
+            <dt>Name</dt>
+            <dd>{{ advisor.name }}</dd>
+            <dt>Email</dt>
+            <dd>{{ advisor.email }}</dd>
+            <dt>Department</dt>
+            <dd>{{ advisor.department }}</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="history-card-actions">
+        <form method="post"
+              action="{{ url_for('delete_appointment', appointment_id=appointment.appointment_id) }}"
+              onsubmit="return confirm('Move this appointment to the Recycle Bin? It will be permanently deleted after 7 days unless restored.');">
+          <button class="btn btn-outline-danger btn-sm" type="submit">Delete appointment</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="history-empty">
+    <span class="material-symbols-outlined" aria-hidden="true">event_note</span>
+    <h2>No resolved sessions yet</h2>
+    <p>Pending requests appear separately. Approved or denied sessions will be listed here.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <a class="btn btn-primary booking-submit" href="{{ url_for('student_pending_appointments') }}">
+        Pending Requests
+      </a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('user_home_view') }}">
+        Book a Session
+      </a>
+    </div>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

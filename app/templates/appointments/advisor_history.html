@@ -1,0 +1,56 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Advisor History | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page history-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">ADVISOR SERVICES</p>
+    <h1>Advisor History</h1>
+    <p>Review advising requests you have approved or denied.</p>
+  </header>
+
+  {% if appointments %}
+  <section class="history-list" aria-label="Resolved appointment requests">
+    {% for appointment, student in appointments %}
+    <article class="history-card history-card-status-{{ appointment.status|lower }}">
+      <div class="history-card-main">
+        <div class="history-date">
+          <span class="material-symbols-outlined" aria-hidden="true">event</span>
+          <div>
+            <h2>{{ student.name }}</h2>
+            <p>{{ appointment.date_time.strftime("%b %d, %Y") }} · {{ appointment.date_time.strftime("%I:%M %p") }}</p>
+          </div>
+        </div>
+        <span class="history-status history-status-{{ appointment.status|lower }}">
+          {{ appointment.status|title }}
+        </span>
+      </div>
+
+      <p class="history-reason">{{ appointment.reason }}</p>
+      <p class="history-created-at">
+        Requested{% if appointment.created_at %} {{ appointment.created_at.strftime("%a, %b %d, %Y · %I:%M %p") }}{% else %} date unavailable{% endif %}
+      </p>
+      <p class="history-advisor">{{ student.email }} · {{ student.major }} · Year {{ student.year }}</p>
+      {% if appointment.status == "denied" and appointment.advising_notes %}
+      <section class="advising-note" aria-label="Advisor's denial note">
+        <strong>Advisor's note</strong>
+        {% for note in appointment.advising_notes %}
+        <p>{{ note.content }}</p>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="history-empty">
+    <span class="material-symbols-outlined" aria-hidden="true">history</span>
+    <h2>No resolved requests yet</h2>
+    <p>Approved and denied requests will appear here.</p>
+    <a class="btn btn-primary booking-submit" href="{{ url_for('advisor_dashboard') }}">
+      View Pending Requests
+    </a>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

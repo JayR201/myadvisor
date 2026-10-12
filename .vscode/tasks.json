@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "MyAdvisor: run app (Python 3.13)",
+			"type": "shell",
+			"command": ".\\.venv-py313\\Scripts\\python.exe",
+			"args": [
+				"manage.py",
+				"run",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				"5001",
+				"--reload"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

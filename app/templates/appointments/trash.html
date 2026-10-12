@@ -1,0 +1,55 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Recycle Bin | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page history-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">STUDENT SERVICES</p>
+    <h1>Recycle Bin</h1>
+    <p>Deleted appointments stay here for up to 7 days, then they are permanently removed.</p>
+  </header>
+
+  {% if appointments %}
+  <section class="history-list" aria-label="Recently deleted advising sessions">
+    {% for appointment, advisor in appointments %}
+    <article class="history-card history-card-trashed">
+      <div class="history-card-main">
+        <div class="history-date">
+          <span class="material-symbols-outlined" aria-hidden="true">event</span>
+          <div>
+            <h2>{{ appointment.date_time.strftime("%b %d, %Y") }}</h2>
+            <p>{{ appointment.date_time.strftime("%I:%M %p") }}</p>
+          </div>
+        </div>
+        <span class="history-status history-status-{{ appointment.status|lower }}">
+          {{ appointment.status|title }}
+        </span>
+      </div>
+
+      <p class="history-reason">{{ appointment.reason }}</p>
+      <p class="history-deleted-at">
+        Deleted {{ appointment.deleted_at.strftime("%b %d, %Y at %I:%M %p") }} · Removed automatically after 7 days
+      </p>
+      <p class="history-advisor">Advisor: {{ advisor.name }}</p>
+
+      <div class="history-card-actions">
+        <form method="post"
+              action="{{ url_for('restore_appointment', appointment_id=appointment.appointment_id) }}">
+          <button class="btn btn-outline-primary btn-sm" type="submit">Restore appointment</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="history-empty">
+    <span class="material-symbols-outlined" aria-hidden="true">delete_outline</span>
+    <h2>Your recycle bin is empty</h2>
+    <p>Appointments you delete will appear here for up to 7 days.</p>
+    <a class="btn btn-primary booking-submit" href="{{ url_for('appointment_history') }}">
+      Back to Advising History
+    </a>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

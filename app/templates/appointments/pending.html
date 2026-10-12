@@ -1,0 +1,86 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Pending Requests | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page history-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">STUDENT SERVICES</p>
+    <h1>Pending Requests</h1>
+    <p>Track advising sessions waiting for your advisor's decision.</p>
+  </header>
+
+  {% if appointments %}
+  <section class="history-list" aria-label="Your pending advising requests">
+    {% for appointment, advisor in appointments %}
+    <article class="history-card history-card-status-pending {% if latest_appointment_id == appointment.appointment_id %}history-card-latest{% endif %}">
+      <div class="history-card-main">
+        <div class="history-date">
+          <span class="material-symbols-outlined" aria-hidden="true">event</span>
+          <div>
+            <h2>{{ appointment.date_time.strftime("%b %d, %Y") }}</h2>
+            <p>{{ appointment.date_time.strftime("%I:%M %p") }}</p>
+          </div>
+        </div>
+        <div class="history-card-badges">
+          {% if latest_appointment_id == appointment.appointment_id %}
+          <span class="history-latest-badge">New request</span>
+          {% endif %}
+          <span class="history-status history-status-pending">Pending</span>
+        </div>
+      </div>
+
+      <p class="history-reason">{{ appointment.reason }}</p>
+      <p class="history-created-at">
+        Requested{% if appointment.created_at %} {{ appointment.created_at.strftime("%a, %b %d, %Y · %I:%M %p") }}{% else %} date unavailable{% endif %}
+      </p>
+
+      <div class="history-details">
+        <details>
+          <summary>Student Info</summary>
+          <dl>
+            <dt>Name</dt>
+            <dd>{{ student.name }}</dd>
+            <dt>Email</dt>
+            <dd>{{ student.email }}</dd>
+            <dt>Major</dt>
+            <dd>{{ student.major }}</dd>
+            <dt>Year</dt>
+            <dd>{{ student.year }}</dd>
+          </dl>
+        </details>
+        <details>
+          <summary>Advisor Info</summary>
+          <dl>
+            <dt>Name</dt>
+            <dd>{{ advisor.name }}</dd>
+            <dt>Email</dt>
+            <dd>{{ advisor.email }}</dd>
+            <dt>Department</dt>
+            <dd>{{ advisor.department }}</dd>
+          </dl>
+        </details>
+      </div>
+
+      <div class="history-card-actions">
+        <form method="post"
+              action="{{ url_for('delete_appointment', appointment_id=appointment.appointment_id) }}"
+              onsubmit="return confirm('Move this appointment to the Recycle Bin? It will be permanently deleted after 7 days unless restored.');">
+          <input type="hidden" name="return_to" value="pending">
+          <button class="btn btn-outline-danger btn-sm" type="submit">Delete appointment</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="history-empty">
+    <span class="material-symbols-outlined" aria-hidden="true">hourglass_top</span>
+    <h2>No pending requests</h2>
+    <p>New requests you submit will appear here until your advisor responds.</p>
+    <a class="btn btn-primary booking-submit" href="{{ url_for('user_home_view') }}">
+      Book a Session
+    </a>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

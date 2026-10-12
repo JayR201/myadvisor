@@ -1,0 +1,62 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Book an Advising Session | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">STUDENT SERVICES</p>
+    <h1>Book an Advising Session</h1>
+    <p>Choose a time to meet with an advisor and tell us what you would like to discuss.</p>
+  </header>
+
+  <section class="booking-card" aria-labelledby="booking-form-title">
+    <div class="booking-card-heading">
+      <div>
+        <p class="booking-eyebrow">NEW REQUEST</p>
+        <h2 id="booking-form-title">Plan your session</h2>
+      </div>
+      <span class="booking-icon material-symbols-outlined" aria-hidden="true">calendar_month</span>
+    </div>
+
+    {% if advisors %}
+    <form method="post" action="{{ url_for('book_appointment') }}" class="booking-form">
+      <div class="booking-fields">
+        <div class="booking-field">
+          <label for="appointment-date">Date</label>
+          <input class="form-control" id="appointment-date" name="appointment_date" type="date" required>
+        </div>
+        <div class="booking-field">
+          <label for="appointment-time">Time</label>
+          <input class="form-control" id="appointment-time" name="appointment_time" type="time" required>
+        </div>
+        <div class="booking-field booking-field-full">
+          <label for="advisor-id">Advisor</label>
+          <select class="form-select" id="advisor-id" name="advisor_id" required>
+            <option value="" selected disabled>Select an advisor</option>
+            {% for advisor in advisors %}
+            <option value="{{ advisor.advisor_id }}">{{ advisor.name }} — {{ advisor.department }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="booking-field booking-field-full">
+          <label for="appointment-reason">Reason for session</label>
+          <textarea class="form-control" id="appointment-reason" name="reason" rows="4" required></textarea>
+        </div>
+      </div>
+
+      <div class="booking-actions">
+        <span class="booking-note">Your request will be sent to the selected advisor.</span>
+        <button class="btn btn-primary booking-submit" type="submit">
+          Book Session
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </button>
+      </div>
+    </form>
+    {% else %}
+    <div class="alert alert-warning mb-0" role="status">
+      No advisors are available yet. Please try again later.
+    </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

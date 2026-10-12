@@ -1,0 +1,64 @@
+{% extends "authenticated-base.html" %}
+{% block title %}Manage Appointment Requests | MyAdvisor{% endblock %}
+
+{% block subpage_content %}
+<main class="booking-page history-page">
+  <header class="booking-heading">
+    <p class="booking-eyebrow">ADVISOR SERVICES</p>
+    <h1>Manage Appointment Requests</h1>
+    <p>Review and respond to pending advising session requests.</p>
+  </header>
+
+  {% if appointments %}
+  <section class="history-list" aria-label="Pending appointment requests">
+    {% for appointment, student in appointments %}
+    <article class="history-card history-card-status-pending">
+      <div class="history-card-main">
+        <div class="history-date">
+          <span class="material-symbols-outlined" aria-hidden="true">event</span>
+          <div>
+            <h2>{{ student.name }}</h2>
+            <p>{{ appointment.date_time.strftime("%b %d, %Y") }} · {{ appointment.date_time.strftime("%I:%M %p") }}</p>
+          </div>
+        </div>
+        <span class="history-status history-status-pending">Pending</span>
+      </div>
+
+      <p class="history-reason">{{ appointment.reason }}</p>
+      <p class="history-advisor">{{ student.email }} · {{ student.major }} · Year {{ student.year }}</p>
+
+      <div class="advisor-request-actions">
+        <form method="post"
+              action="{{ url_for('decide_appointment', appointment_id=appointment.appointment_id) }}">
+          <input type="hidden" name="decision" value="approve">
+          <button class="btn btn-success btn-sm" type="submit">
+            Approve
+          </button>
+        </form>
+        <form method="post"
+              action="{{ url_for('decide_appointment', appointment_id=appointment.appointment_id) }}"
+              class="advisor-denial-form">
+          <input type="hidden" name="decision" value="deny">
+          <label for="denial-note-{{ appointment.appointment_id }}">Note to explain the denial</label>
+          <textarea id="denial-note-{{ appointment.appointment_id }}"
+                    class="form-control"
+                    name="denial_note"
+                    rows="2"
+                    required></textarea>
+          <button class="btn btn-outline-danger btn-sm" type="submit">
+            Deny Request
+          </button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="history-empty">
+    <span class="material-symbols-outlined" aria-hidden="true">task_alt</span>
+    <h2>No pending requests</h2>
+    <p>New advising session requests assigned to you will appear here.</p>
+  </section>
+  {% endif %}
+</main>
+{% endblock %}

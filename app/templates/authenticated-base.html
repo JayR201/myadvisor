@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block internal_css %}
+<style>
+    body {
+        overflow-x: hidden;
+        background: #f6f8fb;
+    }
+
+    #wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1030;
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        transition: all 0.3s;
+        background: var(--brand-sidebar);
+        color: #fff;
+    }
+
+    #sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    #sidebar .nav-link {
+        color: var(--brand-sidebar-text);
+        font-weight: 500;
+    }
+
+    #sidebar .nav-link:hover,
+    #sidebar .nav-link.active {
+        color: var(--brand-ink);
+        background-color: var(--brand-accent);
+        border-radius: 0.5rem;
+    }
+
+    #sidebar .brand-wordmark {
+        color: #fff;
+        font-size: 1.25rem;
+        text-align: center;
+        margin: 1rem 0 1.5rem;
+    }
+
+    #sidebar .brand-mark {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    #content {
+        flex: 1 1 auto;
+        width: calc(100% - 250px);
+        min-width: 0;
+        min-height: 100vh;
+        margin-left: 250px;
+        padding: 1rem;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        background-color: #f6f8fb;
+    }
+
+    #sidebar.collapsed ~ #content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .navbar {
+        border-bottom: 1px solid color-mix(in srgb, var(--brand-sidebar) 75%, white);
+    }
+
+    .app-navbar {
+        background-color: var(--brand-sidebar);
+        color: #fff;
+        margin: -1rem -1rem 1rem !important;
+        border-radius: 0 !important;
+    }
+
+    .app-navbar .btn-outline-secondary {
+        color: #fff;
+        border-color: var(--brand-sidebar-text);
+    }
+
+    .app-navbar .btn-outline-secondary:hover {
+        color: var(--brand-ink);
+        background-color: var(--brand-accent);
+        border-color: var(--brand-accent);
+    }
+
+    .app-footer {
+        margin-top: auto;
+        padding: 1.25rem 0 0.25rem;
+        color: var(--brand-muted);
+        font-size: 0.8rem;
+        text-align: center;
+    }
+</style>
+{% block additional_styles %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div id="wrapper">
+    <nav id="sidebar" class="p-3 d-flex flex-column vh-100">
+        <div class="brand-wordmark brand-lockup">
+            <img class="brand-mark" src="{{ url_for('static', path='img/myadvisor-mark.svg') }}" alt="">
+            <span>MyAdvisor</span>
+        </div>
+
+        <ul class="nav nav-pills flex-column gap-2 flex-grow-1">
+            {% if user.role == "regular_user" %}
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/app') }}"
+                   href="{{ url_for('user_home_view') }}">
+                    <span class="material-symbols-outlined me-2">home</span>
+                    Book a Session
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/appointments/pending') }}"
+                   href="{{ url_for('student_pending_appointments') }}">
+                    <span class="material-symbols-outlined me-2">hourglass_top</span>
+                    Pending Requests
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/appointments/history') }}"
+                   href="{{ url_for('appointment_history') }}">
+                    <span class="material-symbols-outlined me-2">history</span>
+                    Advising History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/appointments/trash') }}"
+                   href="{{ url_for('appointment_trash') }}">
+                    <span class="material-symbols-outlined me-2">delete</span>
+                    Recycle Bin
+                </a>
+            </li>
+            {% endif %}
+            {% if user.role == "advisor" %}
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path == '/advisor/appointments' }}"
+                   href="{{ url_for('advisor_dashboard') }}">
+                    <span class="material-symbols-outlined me-2">task_alt</span>
+                    Manage Requests
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {{ 'active' if request.url.path.startswith('/advisor/appointments/history') }}"
+                   href="{{ url_for('advisor_appointment_history') }}">
+                    <span class="material-symbols-outlined me-2">history</span>
+                    Advisor History
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item mt-auto">
+                <a class="nav-link d-flex align-items-center text-danger" href="{{ url_for('logout') }}">
+                    <span class="material-symbols-outlined me-2">logout</span>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg app-navbar mb-4 px-3 shadow-sm">
+            <button class="btn btn-outline-secondary" id="menu-toggle" type="button">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <span class="fw-semibold">Welcome, {{ user.username }}</span>
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class="col-12">
+                {% for message in get_flashed_messages(request) %}
+                <div class="alert alert-{{ message.type }}" role="alert">{{ message.message }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% block subpage_content %}{% endblock %}
+
+        <footer class="app-footer">&copy; MyAdvisor</footer>
+    </div>
+</div>
+
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        document.getElementById("sidebar").classList.toggle("collapsed");
+    });
+</script>
+{% block subpage_scripts %}{% endblock %}
+{% endblock %}
