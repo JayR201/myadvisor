@@ -1,0 +1,7 @@
+$kind: http-request
+description: Retrieve a list of pending appointment requests for the signed-in advisor.
+url: "{{baseUrl}}/advisor/appointments"
+method: GET
+headers:
+  Cookie: access_token={{accessToken}}
+order: 1000

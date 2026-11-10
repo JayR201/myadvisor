@@ -1,0 +1,13 @@
+$kind: http-request
+description: Approve or deny a pending appointment request for the signed-in advisor.
+url: "{{baseUrl}}/advisor/appointments/{{appointmentId}}/decision"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+  Cookie: access_token={{accessToken}}
+body:
+  type: urlencoded
+  content:
+    decision: approve
+    denial_note: ""
+order: 3000

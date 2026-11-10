@@ -1,0 +1,430 @@
+{
+  "info": {
+    "name": "MyAdvisor Appointment API",
+    "description": "Postman collection for the MyAdvisor appointment workflows: booking, history, pending requests, recycle bin, and advisor decisions.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentUsername",
+      "value": "bob",
+      "type": "string"
+    },
+    {
+      "key": "studentPassword",
+      "value": "bobpass",
+      "type": "string"
+    },
+    {
+      "key": "advisorUsername",
+      "value": "advisor",
+      "type": "string"
+    },
+    {
+      "key": "advisorPassword",
+      "value": "advisorpass",
+      "type": "string"
+    },
+    {
+      "key": "advisorId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "appointmentId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login as Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{studentUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{studentPassword}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Authenticate as the student account and store the access token cookie for the rest of the collection."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is redirect after login\", function () {\n  pm.response.to.have.status(303);\n});",
+                  "if (pm.cookies.has('access_token')) {\n  pm.collectionVariables.set('accessToken', pm.cookies.get('access_token'));\n}",
+                  "pm.test(\"Access token cookie is present\", function () {\n  pm.expect(pm.cookies.has('access_token')).to.be.true;\n});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as Advisor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{advisorUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{advisorPassword}}"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Authenticate as the advisor account for advisor-only appointment management requests."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is redirect after login\", function () {\n  pm.response.to.have.status(303);\n});",
+                  "if (pm.cookies.has('access_token')) {\n  pm.collectionVariables.set('accessToken', pm.cookies.get('access_token'));\n}",
+                  "pm.test(\"Access token cookie is present\", function () {\n  pm.expect(pm.cookies.has('access_token')).to.be.true;\n});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Student Appointment Flows",
+      "item": [
+        {
+          "name": "Book an Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "advisor_id",
+                  "value": "{{advisorId}}"
+                },
+                {
+                  "key": "appointment_date",
+                  "value": "2027-02-01"
+                },
+                {
+                  "key": "appointment_time",
+                  "value": "09:30"
+                },
+                {
+                  "key": "reason",
+                  "value": "Need help choosing electives."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments/book",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "book"
+              ]
+            },
+            "description": "Create a pending advising session request for the signed-in student."
+          }
+        },
+        {
+          "name": "Get Student History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "history"
+              ]
+            },
+            "description": "Retrieve the signed-in student's resolved appointment history."
+          }
+        },
+        {
+          "name": "Get Student Pending Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "pending"
+              ]
+            },
+            "description": "Fetch pending appointments for the signed-in student."
+          }
+        },
+        {
+          "name": "Delete an Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "return_to",
+                  "value": "history"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments/{{appointmentId}}/delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointmentId}}",
+                "delete"
+              ]
+            },
+            "description": "Soft-delete an appointment belonging to the signed-in student."
+          }
+        },
+        {
+          "name": "Get Recycle Bin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/trash",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "trash"
+              ]
+            },
+            "description": "List the signed-in student's deleted appointments in the recycle bin."
+          }
+        },
+        {
+          "name": "Restore Deleted Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/trash/{{appointmentId}}/restore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "trash",
+                "{{appointmentId}}",
+                "restore"
+              ]
+            },
+            "description": "Restore a deleted appointment from the recycle bin if it is still within the retention period."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Advisor Appointment Flows",
+      "item": [
+        {
+          "name": "Get Advisor Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/advisor/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "advisor",
+                "appointments"
+              ]
+            },
+            "description": "Retrieve a list of pending appointment requests for the signed-in advisor."
+          }
+        },
+        {
+          "name": "Get Advisor History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/advisor/appointments/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "advisor",
+                "appointments",
+                "history"
+              ]
+            },
+            "description": "Retrieve resolved appointment decisions for the signed-in advisor."
+          }
+        },
+        {
+          "name": "Decide on Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "decision",
+                  "value": "approve"
+                },
+                {
+                  "key": "denial_note",
+                  "value": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/advisor/appointments/{{appointmentId}}/decision",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "advisor",
+                "appointments",
+                "{{appointmentId}}",
+                "decision"
+              ]
+            },
+            "description": "Approve or deny a pending appointment request for the signed-in advisor."
+          }
+        }
+      ]
+    }
+  ]
+}

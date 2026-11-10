@@ -1,0 +1,7 @@
+$kind: http-request
+description: Retrieve resolved appointment decisions for the signed-in advisor.
+url: "{{baseUrl}}/advisor/appointments/history"
+method: GET
+headers:
+  Cookie: access_token={{accessToken}}
+order: 2000

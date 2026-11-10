@@ -1,0 +1,11 @@
+# Use this workspace to collaborate
+workspace:
+  id: 2c7fd3de-be0d-47b0-881d-c47164c9d869
+
+localResources:
+  collections:
+    - ../docs/myadvisor_appointment_api.postman_collection.json
+
+cloudResources:
+  collections:
+    ../postman/collections/MyAdvisor Appointment API: 9bf32c09-3a82-48eb-b3a4-dfc0b2751ea9

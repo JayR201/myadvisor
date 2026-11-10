@@ -1,0 +1,25 @@
+$kind: http-request
+description: Authenticate as the advisor account for advisor-only appointment management requests.
+url: "{{baseUrl}}/login"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    username: "{{advisorUsername}}"
+    password: "{{advisorPassword}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is redirect after login", function () {
+        pm.response.to.have.status(200);
+      });
+      if (pm.cookies.has('access_token')) {
+        pm.collectionVariables.set('accessToken', pm.cookies.get('access_token'));
+      }
+      pm.test("Access token cookie is present", function () {
+        pm.expect(pm.cookies.has('access_token')).to.be.true;
+      });
+    language: text/javascript
+order: 2000

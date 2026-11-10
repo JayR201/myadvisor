@@ -1,0 +1,15 @@
+$kind: http-request
+description: Create a pending advising session request for the signed-in student.
+url: "{{baseUrl}}/appointments/book"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+  Cookie: access_token={{accessToken}}
+body:
+  type: urlencoded
+  content:
+    advisor_id: "{{advisorId}}"
+    appointment_date: 2027-02-01
+    appointment_time: 09:30
+    reason: Need help choosing electives.
+order: 1000

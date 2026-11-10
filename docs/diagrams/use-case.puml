@@ -1,0 +1,41 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam actorBorderColor #1B365D
+skinparam actorFontColor #1E232D
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam usecaseBorderColor #1B365D
+skinparam usecaseFontColor #1E232D
+skinparam rectangleBorderColor #1B365D
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam arrowColor #1B365D
+
+actor "Student" as Student
+
+rectangle "MyAdvisor" {
+  usecase "Book an Advising Session" as Book_an_Advising_Session
+  usecase "Manage Appointment Requests" as Manage_Appointment_Requests
+  usecase "Accept or Decline Appointment Request" as Accept_or_Decline_Appointment_Request
+  usecase "View Advising History" as View_Advising_History
+  usecase "View Request Outcome" as View_Request_Outcome
+  usecase "View Appointment Details" as View_Appointment_Details
+  usecase "View Student and Advisor Info" as View_Student_and_Advisor_Info
+}
+
+actor "Advisor" as Advisor
+
+Student --> Book_an_Advising_Session
+Manage_Appointment_Requests <-- Advisor
+Manage_Appointment_Requests ..> Accept_or_Decline_Appointment_Request : <<include>>
+Manage_Appointment_Requests ..> Book_an_Advising_Session : <<extend>>
+Accept_or_Decline_Appointment_Request <-- Advisor
+Student --> View_Advising_History
+View_Advising_History ..> View_Request_Outcome : <<include>>
+Student --> View_Request_Outcome
+Student --> View_Appointment_Details
+View_Appointment_Details <-- Advisor
+Student --> View_Student_and_Advisor_Info
+View_Student_and_Advisor_Info <-- Advisor
+View_Student_and_Advisor_Info ..> View_Appointment_Details : <<extend>>
+
+@enduml

@@ -1,0 +1,7 @@
+$kind: http-request
+description: Retrieve the signed-in student's resolved appointment history.
+url: "{{baseUrl}}/appointments/history"
+method: GET
+headers:
+  Cookie: access_token={{accessToken}}
+order: 2000

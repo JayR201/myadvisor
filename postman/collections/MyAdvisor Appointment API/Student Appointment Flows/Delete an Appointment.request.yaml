@@ -1,0 +1,12 @@
+$kind: http-request
+description: Soft-delete an appointment belonging to the signed-in student.
+url: "{{baseUrl}}/appointments/{{appointmentId}}/delete"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+  Cookie: access_token={{accessToken}}
+body:
+  type: urlencoded
+  content:
+    return_to: history
+order: 4000

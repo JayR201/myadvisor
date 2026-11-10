@@ -1,0 +1,7 @@
+$kind: http-request
+description: Fetch pending appointments for the signed-in student.
+url: "{{baseUrl}}/appointments/pending"
+method: GET
+headers:
+  Cookie: access_token={{accessToken}}
+order: 3000

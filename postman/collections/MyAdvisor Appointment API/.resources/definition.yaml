@@ -1,0 +1,11 @@
+$kind: collection
+description: "Postman collection for the MyAdvisor appointment workflows: booking, history, pending requests, recycle bin, and advisor decisions."
+variables:
+  baseUrl: http://127.0.0.1:5000
+  accessToken: ""
+  studentUsername: bob
+  studentPassword: bobpass
+  advisorUsername: advisor
+  advisorPassword: advisorpass
+  advisorId: "1"
+  appointmentId: "1"

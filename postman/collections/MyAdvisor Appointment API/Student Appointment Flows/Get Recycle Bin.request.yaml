@@ -1,0 +1,7 @@
+$kind: http-request
+description: List the signed-in student's deleted appointments in the recycle bin.
+url: "{{baseUrl}}/appointments/trash"
+method: GET
+headers:
+  Cookie: access_token={{accessToken}}
+order: 5000
